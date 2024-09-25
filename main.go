@@ -18,16 +18,16 @@ const (
 
 type Game struct {
 	TimerSystem *ebitick.TimerSystem
-	arena       *map[Position]Square
+	arena       *Arena
 	current     *Tetromino
 	inputSystem input.System
-  input *input.Handler
+	input       *input.Handler
 }
 
 func newGame() *Game {
 	game := &Game{
 		TimerSystem: ebitick.NewTimerSystem(),
-		arena:       generateBorders(),
+		arena:       newArena(),
 	}
 	game.inputSystem.Init(input.SystemConfig{DevicesEnabled: input.AnyDevice})
 
@@ -36,7 +36,7 @@ func newGame() *Game {
 		ActionMoveRight: {input.KeyGamepadRight, input.KeyRight, input.KeyD},
 	}
 
-  game.input = game.inputSystem.NewHandler(0, keymap)
+	game.input = game.inputSystem.NewHandler(0, keymap)
 
 	timer := game.TimerSystem.After(time.Millisecond*UpdateTime, func() {
 		if game.current != nil && !game.current.IsStuck(game.arena) {
@@ -57,12 +57,12 @@ func (g *Game) Update() error {
 	if g.current == nil {
 		g.current = newTetromino(color.RGBA{255, 0, 0, 255})
 	}
-  if g.input.ActionIsJustPressed(ActionMoveLeft) {
-    g.current.Move(-1)
-  }
-  if g.input.ActionIsJustPressed(ActionMoveRight) {
-    g.current.Move(1)
-  }
+	if g.input.ActionIsJustPressed(ActionMoveLeft) {
+		g.current.Move(-1)
+	}
+	if g.input.ActionIsJustPressed(ActionMoveRight) {
+		g.current.Move(1)
+	}
 	return nil
 }
 
@@ -87,21 +87,4 @@ func main() {
 	if err := ebiten.RunGame(newGame()); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func generateBorders() *map[Position]Square {
-	borders := make(map[Position]Square)
-	for y := range 22 {
-		posLeft := Position{X: 1, Y: y + 1}
-		borders[posLeft] = *newSquare(posLeft)
-		posRight := Position{X: 12, Y: y + 1}
-		borders[posRight] = *newSquare(posRight)
-	}
-	for x := range 10 {
-		posTop := Position{X: x + 2, Y: 1}
-		borders[posTop] = *newSquare(posTop)
-		posBot := Position{X: x + 2, Y: 22}
-		borders[posBot] = *newSquare(posBot)
-	}
-	return &borders
 }

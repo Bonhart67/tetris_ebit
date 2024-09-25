@@ -35,7 +35,7 @@ func (t *Tetromino) Move(velocity int) {
 	}
 }
 
-func (t *Tetromino) IsStuck(arena *map[Position]Square) bool {
+func (t *Tetromino) IsStuck(arena *Arena) bool {
 	bottom := make(map[int]Position)
 	for _, part := range t.Parts {
 		if val, ok := bottom[part.X]; !ok {
@@ -52,7 +52,7 @@ func (t *Tetromino) IsStuck(arena *map[Position]Square) bool {
 	return false
 }
 
-func containsPosition(x, y int, arena *map[Position]Square) bool {
+func containsPosition(x, y int, arena *Arena) bool {
 	for _, p := range *arena {
 		if p.X == x && p.Y == y {
 			return true
