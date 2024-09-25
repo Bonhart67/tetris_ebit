@@ -9,6 +9,10 @@ import (
 	"github.com/solarlune/ebitick"
 )
 
+const (
+	UpdateTime = 200
+)
+
 type Game struct {
 	TimerSystem *ebitick.TimerSystem
 	arena       *map[Position]Square
@@ -20,8 +24,15 @@ func newGame() *Game {
 		TimerSystem: ebitick.NewTimerSystem(),
 		arena:       generateBorders(),
 	}
-	timer := game.TimerSystem.After(time.Second, func() {
-		game.current.Descend()
+	timer := game.TimerSystem.After(time.Millisecond*UpdateTime, func() {
+		if game.current != nil && !game.current.IsStuck(game.arena) {
+			game.current.Descend()
+		} else {
+      for _, part := range *game.current.Parts {
+        (*game.arena)[part] = *newSquare(part)
+      }
+			game.current = nil
+		}
 	})
 	timer.Loop = true
 	return game
