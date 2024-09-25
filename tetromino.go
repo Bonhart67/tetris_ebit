@@ -27,6 +27,14 @@ func (t *Tetromino) Descend() {
 	}
 }
 
+func (t *Tetromino) Move(velocity int) {
+	if !t.onEdge(velocity) {
+		for i := range t.Parts {
+			t.Parts[i].X += velocity
+		}
+	}
+}
+
 func (t *Tetromino) IsStuck(arena *map[Position]Square) bool {
 	bottom := make(map[int]Position)
 	for _, part := range t.Parts {
@@ -51,4 +59,13 @@ func containsPosition(x, y int, arena *map[Position]Square) bool {
 		}
 	}
 	return false
+}
+
+func (t *Tetromino) onEdge(velocity int) bool {
+  for _, part := range t.Parts {
+    if (part.X >= 11 && velocity > 0) || (part.X <= 2 && velocity < 0) {
+      return true
+    }
+  }
+  return false
 }

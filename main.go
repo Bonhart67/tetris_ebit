@@ -6,17 +6,22 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	input "github.com/quasilyte/ebitengine-input"
 	"github.com/solarlune/ebitick"
 )
 
 const (
-	UpdateTime = 200
+	UpdateTime                  = 200
+	ActionMoveLeft input.Action = iota
+	ActionMoveRight
 )
 
 type Game struct {
 	TimerSystem *ebitick.TimerSystem
 	arena       *map[Position]Square
 	current     *Tetromino
+	inputSystem input.System
+  input *input.Handler
 }
 
 func newGame() *Game {
@@ -24,13 +29,22 @@ func newGame() *Game {
 		TimerSystem: ebitick.NewTimerSystem(),
 		arena:       generateBorders(),
 	}
+	game.inputSystem.Init(input.SystemConfig{DevicesEnabled: input.AnyDevice})
+
+	keymap := input.Keymap{
+		ActionMoveLeft:  {input.KeyGamepadLeft, input.KeyLeft, input.KeyA},
+		ActionMoveRight: {input.KeyGamepadRight, input.KeyRight, input.KeyD},
+	}
+
+  game.input = game.inputSystem.NewHandler(0, keymap)
+
 	timer := game.TimerSystem.After(time.Millisecond*UpdateTime, func() {
 		if game.current != nil && !game.current.IsStuck(game.arena) {
 			game.current.Descend()
 		} else {
-      for _, part := range *game.current.Parts {
-        (*game.arena)[part] = *newSquare(part)
-      }
+			for _, part := range *game.current.Parts {
+				(*game.arena)[part] = *newSquare(part)
+			}
 			game.current = nil
 		}
 	})
@@ -43,6 +57,12 @@ func (g *Game) Update() error {
 	if g.current == nil {
 		g.current = newTetromino(color.RGBA{255, 0, 0, 255})
 	}
+  if g.input.ActionIsJustPressed(ActionMoveLeft) {
+    g.current.Move(-1)
+  }
+  if g.input.ActionIsJustPressed(ActionMoveRight) {
+    g.current.Move(1)
+  }
 	return nil
 }
 
