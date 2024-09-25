@@ -20,9 +20,9 @@ type Position struct {
 	X, Y int
 }
 
-func (s Square) Image() (*ebiten.Image, ebiten.DrawImageOptions) {
+func (s Square) Image(c color.Color) (*ebiten.Image, ebiten.DrawImageOptions) {
 	img := ebiten.NewImage(40, 40)
-	img.Fill(color.RGBA{120, 120, 120, 255})
+	img.Fill(c)
 	opts := ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(s.screenPosition())
 	return img, opts

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"image/color"
 	"log"
 	"time"
 
@@ -12,6 +12,7 @@ import (
 type Game struct {
 	TimerSystem *ebitick.TimerSystem
 	arena       *map[Position]Square
+	current     *Tetromino
 }
 
 func newGame() *Game {
@@ -20,7 +21,7 @@ func newGame() *Game {
 		arena:       generateBorders(),
 	}
 	timer := game.TimerSystem.After(time.Second, func() {
-		fmt.Print("TICK")
+		game.current.Descend()
 	})
 	timer.Loop = true
 	return game
@@ -28,12 +29,19 @@ func newGame() *Game {
 
 func (g *Game) Update() error {
 	g.TimerSystem.Update()
+	if g.current == nil {
+		g.current = newTetromino(color.RGBA{255, 0, 0, 255})
+	}
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	for _, square := range *g.arena {
-		img, opts := square.Image()
+		img, opts := square.Image(color.RGBA{120, 120, 120, 255})
+		screen.DrawImage(img, &opts)
+	}
+	for _, part := range g.current.Parts {
+		img, opts := newSquare(part).Image(g.current.Color)
 		screen.DrawImage(img, &opts)
 	}
 }
