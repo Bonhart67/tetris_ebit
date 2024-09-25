@@ -39,7 +39,7 @@ func newGame() *Game {
 	game.input = game.inputSystem.NewHandler(0, keymap)
 
 	timer := game.TimerSystem.After(time.Millisecond*UpdateTime, func() {
-		if game.current != nil && !game.current.IsStuck(game.arena) {
+		if game.current != nil && game.current.CanMoveDown(game.arena) {
 			game.current.Descend()
 		} else {
 			for _, part := range *game.current.Parts {
@@ -58,10 +58,10 @@ func (g *Game) Update() error {
 		g.current = newTetromino(color.RGBA{255, 0, 0, 255})
 	}
 	if g.input.ActionIsJustPressed(ActionMoveLeft) {
-		g.current.Move(-1)
+		g.current.MoveLeft(g.arena)
 	}
 	if g.input.ActionIsJustPressed(ActionMoveRight) {
-		g.current.Move(1)
+		g.current.MoveRight(g.arena)
 	}
 	return nil
 }

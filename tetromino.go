@@ -27,45 +27,63 @@ func (t *Tetromino) Descend() {
 	}
 }
 
-func (t *Tetromino) Move(velocity int) {
-	if !t.onEdge(velocity) {
+func (t *Tetromino) MoveLeft(a *Arena) {
+	if t.canMoveLeft(a) {
 		for i := range t.Parts {
-			t.Parts[i].X += velocity
+			t.Parts[i].X -= 1
 		}
 	}
 }
 
-func (t *Tetromino) IsStuck(arena *Arena) bool {
+func (t *Tetromino) MoveRight(a *Arena) {
+	if t.canMoveRight(a) {
+		for i := range t.Parts {
+			t.Parts[i].X += 1
+		}
+	}
+}
+
+func (t *Tetromino) CanMoveDown(a *Arena) bool {
 	bottom := make(map[int]Position)
 	for _, part := range t.Parts {
-		if val, ok := bottom[part.X]; !ok {
-			bottom[part.X] = part
-		} else if ok && val.Y < part.Y {
+		if val, ok := bottom[part.X]; !ok || (ok && val.Y < part.Y) {
 			bottom[part.X] = part
 		}
 	}
 	for _, part := range bottom {
-		if containsPosition(part.X, part.Y+1, arena) {
-			return true
+		if a.Contains(part.X, part.Y+1) {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
-func containsPosition(x, y int, arena *Arena) bool {
-	for _, p := range *arena {
-		if p.X == x && p.Y == y {
-			return true
+func (t *Tetromino) canMoveLeft(a *Arena) bool {
+	left := make(map[int]Position)
+	for _, part := range t.Parts {
+		if present, ok := left[part.Y]; !ok || (ok && present.X > part.X) {
+			left[part.Y] = part
 		}
 	}
-	return false
+	for _, part := range left {
+		if a.Contains(part.X-1, part.Y) {
+			return false
+		}
+	}
+	return true
 }
 
-func (t *Tetromino) onEdge(velocity int) bool {
-  for _, part := range t.Parts {
-    if (part.X >= 11 && velocity > 0) || (part.X <= 2 && velocity < 0) {
-      return true
-    }
-  }
-  return false
+func (t *Tetromino) canMoveRight(a *Arena) bool {
+	right := make(map[int]Position)
+	for _, part := range t.Parts {
+		if present, ok := right[part.Y]; !ok || (ok && present.X < part.X) {
+			right[part.Y] = part
+		}
+	}
+	for _, part := range right {
+		if a.Contains(part.X+1, part.Y) {
+			return false
+		}
+	}
+	return true
 }
