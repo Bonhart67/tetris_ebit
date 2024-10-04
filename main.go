@@ -1,7 +1,6 @@
 package main
 
 import (
-	"image/color"
 	"log"
 	"time"
 
@@ -43,7 +42,7 @@ func newGame() *Game {
 			game.current.Descend()
 		} else {
 			for _, part := range *game.current.Parts {
-				(*game.arena)[part] = *newSquare(part)
+				(*game.arena)[part] = *newSquare(part, game.current.Color)
 			}
 			game.current = nil
 		}
@@ -55,7 +54,7 @@ func newGame() *Game {
 func (g *Game) Update() error {
 	g.TimerSystem.Update()
 	if g.current == nil {
-		g.current = newTetromino(color.RGBA{255, 0, 0, 255})
+		g.current = newTetromino()
 	}
 	if g.input.ActionIsJustPressed(ActionMoveLeft) {
 		g.current.MoveLeft(g.arena)
@@ -68,11 +67,11 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	for _, square := range *g.arena {
-		img, opts := square.Image(color.RGBA{120, 120, 120, 255})
+		img, opts := square.Image()
 		screen.DrawImage(img, &opts)
 	}
 	for _, part := range g.current.Parts {
-		img, opts := newSquare(part).Image(g.current.Color)
+		img, opts := newSquare(part, g.current.Color).Image()
 		screen.DrawImage(img, &opts)
 	}
 }

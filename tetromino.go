@@ -2,14 +2,29 @@ package main
 
 import (
 	"image/color"
+	"math/rand"
 )
+
+func randomColor() color.Color {
+	colors := []color.Color{
+		color.RGBA{255, 0, 0, 255},
+		color.RGBA{0, 255, 0, 255},
+		color.RGBA{0, 255, 0, 255},
+		color.RGBA{0, 128, 128, 255},
+		color.RGBA{255, 165, 0, 255},
+		color.RGBA{255, 255, 0, 255},
+		color.RGBA{160, 32, 240, 255},
+	}
+	return colors[rand.Intn(len(colors))]
+}
 
 type Tetromino struct {
 	Parts *[4]Position
 	Color color.Color
 }
 
-func newTetromino(c color.Color) *Tetromino {
+func newTetromino() *Tetromino {
+
 	return &Tetromino{
 		Parts: &[4]Position{
 			{X: 7, Y: 2},
@@ -17,7 +32,7 @@ func newTetromino(c color.Color) *Tetromino {
 			{X: 6, Y: 3},
 			{X: 6, Y: 4},
 		},
-		Color: c,
+		Color: randomColor(),
 	}
 }
 
