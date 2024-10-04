@@ -58,6 +58,11 @@ func (t *Tetromino) MoveRight(a *Arena) {
 	}
 }
 
+func (t *Tetromino) Rotate(a *Arena) {
+	// TODO
+	println("Rotate")
+}
+
 func (t *Tetromino) CanMoveDown(a *Arena) bool {
 	bottom := make(map[int]Position)
 	for _, part := range t.Parts {

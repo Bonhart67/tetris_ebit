@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -13,6 +14,8 @@ const (
 	UpdateTime                  = 200
 	ActionMoveLeft input.Action = iota
 	ActionMoveRight
+	ActionRotate
+	ActionCloseGame
 )
 
 type Game struct {
@@ -33,6 +36,8 @@ func newGame() *Game {
 	keymap := input.Keymap{
 		ActionMoveLeft:  {input.KeyGamepadLeft, input.KeyLeft, input.KeyA},
 		ActionMoveRight: {input.KeyGamepadRight, input.KeyRight, input.KeyD},
+		ActionRotate:    {input.KeyGamepadDown, input.KeyDown, input.KeyS},
+		ActionCloseGame: {input.KeyEscape, input.KeyQ},
 	}
 
 	game.input = game.inputSystem.NewHandler(0, keymap)
@@ -62,6 +67,12 @@ func (g *Game) Update() error {
 	if g.input.ActionIsJustPressed(ActionMoveRight) {
 		g.current.MoveRight(g.arena)
 	}
+	if g.input.ActionIsJustPressed(ActionRotate) {
+		g.current.Rotate(g.arena)
+	}
+	if g.input.ActionIsJustPressed(ActionCloseGame) {
+		return Terminated
+	}
 	return nil
 }
 
@@ -84,6 +95,11 @@ func main() {
 	ebiten.SetWindowSize(800, 880)
 	ebiten.SetWindowTitle("Hello, World!")
 	if err := ebiten.RunGame(newGame()); err != nil {
+		if err == Terminated {
+			return
+		}
 		log.Fatal(err)
 	}
 }
+
+var Terminated = errors.New("terminated")
