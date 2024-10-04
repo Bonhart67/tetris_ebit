@@ -18,20 +18,27 @@ func randomColor() color.Color {
 	return colors[rand.Intn(len(colors))]
 }
 
+func randomParts() *[4]Position {
+	tetrominos := [][4]Position{
+		{{X: 6, Y: 2}, {X: 6, Y: 3}, {X: 6, Y: 4}, {X: 6, Y: 5}},
+		{{X: 7, Y: 2}, {X: 7, Y: 3}, {X: 7, Y: 4}, {X: 6, Y: 4}},
+		{{X: 6, Y: 2}, {X: 6, Y: 3}, {X: 6, Y: 4}, {X: 7, Y: 4}},
+		{{X: 6, Y: 2}, {X: 6, Y: 3}, {X: 7, Y: 2}, {X: 7, Y: 3}},
+		{{X: 5, Y: 3}, {X: 6, Y: 3}, {X: 6, Y: 2}, {X: 7, Y: 2}},
+		{{X: 5, Y: 2}, {X: 6, Y: 2}, {X: 6, Y: 3}, {X: 7, Y: 2}},
+		{{X: 5, Y: 2}, {X: 6, Y: 3}, {X: 6, Y: 2}, {X: 7, Y: 3}},
+	}
+	return &tetrominos[rand.Intn(len(tetrominos))]
+}
+
 type Tetromino struct {
 	Parts *[4]Position
 	Color color.Color
 }
 
 func newTetromino() *Tetromino {
-
 	return &Tetromino{
-		Parts: &[4]Position{
-			{X: 7, Y: 2},
-			{X: 7, Y: 3},
-			{X: 6, Y: 3},
-			{X: 6, Y: 4},
-		},
+		Parts: randomParts(),
 		Color: randomColor(),
 	}
 }
