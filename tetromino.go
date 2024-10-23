@@ -59,8 +59,7 @@ func (t *Tetromino) MoveRight(a *Arena) {
 }
 
 func (t *Tetromino) Rotate(a *Arena) {
-	// TODO
-	println("Rotate")
+	t.State = (t.State + 1) % 4
 }
 
 func (t *Tetromino) CanMoveDown(a *Arena) bool {
