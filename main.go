@@ -46,9 +46,7 @@ func newGame() *Game {
 		if game.current != nil && game.current.CanMoveDown(game.arena) {
 			game.current.Descend()
 		} else {
-			for _, part := range *game.current.Parts {
-				(*game.arena)[part] = *newSquare(part, game.current.Color)
-			}
+			game.arena.Add(*game.current)
 			game.current = nil
 		}
 	})
@@ -81,7 +79,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		img, opts := square.Image()
 		screen.DrawImage(img, &opts)
 	}
-	for _, part := range g.current.Parts {
+	for _, part := range g.current.parts() {
 		img, opts := newSquare(part, g.current.Color).Image()
 		screen.DrawImage(img, &opts)
 	}

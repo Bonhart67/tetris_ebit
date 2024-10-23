@@ -31,5 +31,5 @@ func (s Square) Image() (*ebiten.Image, ebiten.DrawImageOptions) {
 }
 
 func (s *Square) screenPosition() (x, y float64) {
-	return float64(s.X-1) * 40, float64(s.Y-1) * 40
+	return float64(s.X) * 40, float64(s.Y) * 40
 }

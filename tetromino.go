@@ -18,50 +18,43 @@ func randomColor() color.Color {
 	return colors[rand.Intn(len(colors))]
 }
 
-func randomParts() *[4]Position {
-	tetrominos := [][4]Position{
-		{{X: 6, Y: 2}, {X: 6, Y: 3}, {X: 6, Y: 4}, {X: 6, Y: 5}},
-		{{X: 7, Y: 2}, {X: 7, Y: 3}, {X: 7, Y: 4}, {X: 6, Y: 4}},
-		{{X: 6, Y: 2}, {X: 6, Y: 3}, {X: 6, Y: 4}, {X: 7, Y: 4}},
-		{{X: 6, Y: 2}, {X: 6, Y: 3}, {X: 7, Y: 2}, {X: 7, Y: 3}},
-		{{X: 5, Y: 3}, {X: 6, Y: 3}, {X: 6, Y: 2}, {X: 7, Y: 2}},
-		{{X: 5, Y: 2}, {X: 6, Y: 2}, {X: 6, Y: 3}, {X: 7, Y: 2}},
-		{{X: 5, Y: 2}, {X: 6, Y: 3}, {X: 6, Y: 2}, {X: 7, Y: 3}},
-	}
-	return &tetrominos[rand.Intn(len(tetrominos))]
-}
-
 type Tetromino struct {
-	Parts *[4]Position
+	Position
+	Shape
+	State int
 	Color color.Color
 }
 
 func newTetromino() *Tetromino {
 	return &Tetromino{
-		Parts: randomParts(),
-		Color: randomColor(),
+		Position: Position{X: 4, Y: 1},
+		Shape:    &I{},
+		State:    0,
+		Color:    randomColor(),
 	}
 }
 
-func (t *Tetromino) Descend() {
-	for i := range t.Parts {
-		t.Parts[i].Y += 1
+func (t *Tetromino) parts() []Position {
+	parts := t.Shape.parts(t.State)
+	for i := range parts {
+		parts[i] = Position{X: parts[i].X + t.Position.X, Y: parts[i].Y + t.Position.Y}
 	}
+	return parts
+}
+
+func (t *Tetromino) Descend() {
+	t.Position.Y += 1
 }
 
 func (t *Tetromino) MoveLeft(a *Arena) {
 	if t.canMoveLeft(a) {
-		for i := range t.Parts {
-			t.Parts[i].X -= 1
-		}
+		t.Position.X -= 1
 	}
 }
 
 func (t *Tetromino) MoveRight(a *Arena) {
 	if t.canMoveRight(a) {
-		for i := range t.Parts {
-			t.Parts[i].X += 1
-		}
+		t.Position.X += 1
 	}
 }
 
@@ -72,7 +65,7 @@ func (t *Tetromino) Rotate(a *Arena) {
 
 func (t *Tetromino) CanMoveDown(a *Arena) bool {
 	bottom := make(map[int]Position)
-	for _, part := range t.Parts {
+	for _, part := range t.parts() {
 		if val, ok := bottom[part.X]; !ok || (ok && val.Y < part.Y) {
 			bottom[part.X] = part
 		}
@@ -87,7 +80,7 @@ func (t *Tetromino) CanMoveDown(a *Arena) bool {
 
 func (t *Tetromino) canMoveLeft(a *Arena) bool {
 	left := make(map[int]Position)
-	for _, part := range t.Parts {
+	for _, part := range t.parts() {
 		if present, ok := left[part.Y]; !ok || (ok && present.X > part.X) {
 			left[part.Y] = part
 		}
@@ -102,7 +95,7 @@ func (t *Tetromino) canMoveLeft(a *Arena) bool {
 
 func (t *Tetromino) canMoveRight(a *Arena) bool {
 	right := make(map[int]Position)
-	for _, part := range t.Parts {
+	for _, part := range t.parts() {
 		if present, ok := right[part.Y]; !ok || (ok && present.X < part.X) {
 			right[part.Y] = part
 		}

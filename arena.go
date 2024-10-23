@@ -22,18 +22,24 @@ func (a *Arena) Get(x, y int) (val *Square, ok bool) {
 	return nil, false
 }
 
+func (a Arena) Add(t Tetromino) {
+	for _, part := range t.parts() {
+		a[part] = *newSquare(part, t.Color)
+	}
+}
+
 func generateBorders() *map[Position]Square {
 	borders := make(map[Position]Square)
 	for y := range 22 {
-		posLeft := Position{X: 1, Y: y + 1}
+		posLeft := Position{X: 0, Y: y}
 		borders[posLeft] = *newSquare(posLeft, color.RGBA{120, 120, 120, 255})
-		posRight := Position{X: 12, Y: y + 1}
+		posRight := Position{X: 11, Y: y}
 		borders[posRight] = *newSquare(posRight, color.RGBA{120, 120, 120, 255})
 	}
 	for x := range 10 {
-		posTop := Position{X: x + 2, Y: 1}
+		posTop := Position{X: x + 1, Y: 0}
 		borders[posTop] = *newSquare(posTop, color.RGBA{120, 120, 120, 255})
-		posBot := Position{X: x + 2, Y: 22}
+		posBot := Position{X: x + 1, Y: 21}
 		borders[posBot] = *newSquare(posBot, color.RGBA{120, 120, 120, 255})
 	}
 	return &borders
