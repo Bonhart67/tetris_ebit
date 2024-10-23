@@ -24,6 +24,7 @@ type Game struct {
 	current     *Tetromino
 	inputSystem input.System
 	input       *input.Handler
+	over        bool
 }
 
 func newGame() *Game {
@@ -43,7 +44,9 @@ func newGame() *Game {
 	game.input = game.inputSystem.NewHandler(0, keymap)
 
 	timer := game.TimerSystem.After(time.Millisecond*UpdateTime, func() {
-		if game.current != nil && game.current.CanMoveDown(game.arena) {
+		if game.current != nil && game.current.Collides(game.arena) {
+			game.over = true
+		} else if game.current != nil && game.current.CanMoveDown(game.arena) {
 			game.current.Descend()
 		} else {
 			game.arena.Add(*game.current)
@@ -56,7 +59,7 @@ func newGame() *Game {
 
 func (g *Game) Update() error {
 	g.TimerSystem.Update()
-	if g.current == nil {
+	if !g.over && g.current == nil {
 		g.current = newTetromino()
 	}
 	if g.input.ActionIsJustPressed(ActionMoveLeft) {

@@ -34,6 +34,15 @@ func newTetromino() *Tetromino {
 	}
 }
 
+func (t *Tetromino) Collides(a *Arena) bool {
+	for _, p := range t.parts() {
+		if a.Contains(p.X, p.Y) {
+			return true
+		}
+	}
+	return false
+}
+
 func (t *Tetromino) parts() []Position {
 	parts := t.Shape.parts(t.State)
 	for i := range parts {
@@ -61,10 +70,8 @@ func (t *Tetromino) MoveRight(a *Arena) {
 func (t *Tetromino) Rotate(a *Arena) {
 	prevState := t.State
 	t.State = (t.State + 1) % 4
-	for _, p := range t.parts() {
-		if a.Contains(p.X, p.Y) {
-			t.State = prevState
-		}
+	if t.Collides(a) {
+		t.State = prevState
 	}
 }
 
