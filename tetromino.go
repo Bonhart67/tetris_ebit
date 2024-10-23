@@ -59,7 +59,13 @@ func (t *Tetromino) MoveRight(a *Arena) {
 }
 
 func (t *Tetromino) Rotate(a *Arena) {
+	prevState := t.State
 	t.State = (t.State + 1) % 4
+	for _, p := range t.parts() {
+		if a.Contains(p.X, p.Y) {
+			t.State = prevState
+		}
+	}
 }
 
 func (t *Tetromino) CanMoveDown(a *Arena) bool {
