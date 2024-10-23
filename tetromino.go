@@ -28,7 +28,7 @@ type Tetromino struct {
 func newTetromino() *Tetromino {
 	return &Tetromino{
 		Position: Position{X: 4, Y: 1},
-		Shape:    &I{},
+		Shape:    RandomShape(),
 		State:    0,
 		Color:    randomColor(),
 	}
