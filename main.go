@@ -15,6 +15,7 @@ const (
 	ActionMoveLeft input.Action = iota
 	ActionMoveRight
 	ActionRotate
+	ActionMoveDown
 	ActionCloseGame
 )
 
@@ -38,6 +39,7 @@ func newGame() *Game {
 		ActionMoveLeft:  {input.KeyGamepadLeft, input.KeyLeft, input.KeyA},
 		ActionMoveRight: {input.KeyGamepadRight, input.KeyRight, input.KeyD},
 		ActionRotate:    {input.KeyGamepadDown, input.KeyDown, input.KeyS},
+		ActionMoveDown:  {input.KeyGamepadA, input.KeySpace},
 		ActionCloseGame: {input.KeyEscape, input.KeyQ},
 	}
 
@@ -70,6 +72,9 @@ func (g *Game) Update() error {
 	}
 	if g.input.ActionIsJustPressed(ActionRotate) {
 		g.current.Rotate(g.arena)
+	}
+	if g.input.ActionIsJustPressed(ActionMoveDown) {
+		g.current.MoveDown(g.arena)
 	}
 	if g.input.ActionIsJustPressed(ActionCloseGame) {
 		return Terminated

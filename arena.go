@@ -66,11 +66,13 @@ func (a *Arena) deleteRow(y int) {
 }
 
 func (a *Arena) pushDownOnce(y int) {
-	for x := 1; x < 11; x++ {
-		if s, ok := a.Get(x, y-1); ok {
-			nextPos := Position{X: x, Y: y}
-			a.squares[nextPos] = *newSquare(nextPos, s.color)
-			a.Delete(x, y-1)
+	for current := y - 1; current > 1; current-- {
+		for x := 1; x < 11; x++ {
+			if s, ok := a.Get(x, current); ok {
+				nextPos := Position{X: x, Y: current + 1}
+				a.squares[nextPos] = *newSquare(nextPos, s.color)
+				a.Delete(x, current)
+			}
 		}
 	}
 }

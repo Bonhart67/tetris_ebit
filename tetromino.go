@@ -75,6 +75,12 @@ func (t *Tetromino) Rotate(a Arena) {
 	}
 }
 
+func (t *Tetromino) MoveDown(a Arena) {
+	for t.CanMoveDown(a) {
+		t.Position.Y += 1
+	}
+}
+
 func (t *Tetromino) CanMoveDown(a Arena) bool {
 	bottom := make(map[int]Position)
 	for _, part := range t.parts() {
