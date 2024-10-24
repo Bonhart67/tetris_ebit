@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	UpdateTime                  = 200
+	UpdateTime                  = 200 * .8
 	ActionMoveLeft input.Action = iota
 	ActionMoveRight
 	ActionRotate
@@ -20,7 +20,7 @@ const (
 
 type Game struct {
 	TimerSystem *ebitick.TimerSystem
-	arena       *Arena
+	arena       Arena
 	current     *Tetromino
 	inputSystem input.System
 	input       *input.Handler
@@ -78,7 +78,7 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	for _, square := range *g.arena {
+	for _, square := range g.arena.squares {
 		img, opts := square.Image()
 		screen.DrawImage(img, &opts)
 	}

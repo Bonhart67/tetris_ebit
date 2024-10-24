@@ -34,7 +34,7 @@ func newTetromino() *Tetromino {
 	}
 }
 
-func (t *Tetromino) Collides(a *Arena) bool {
+func (t *Tetromino) Collides(a Arena) bool {
 	for _, p := range t.parts() {
 		if a.Contains(p.X, p.Y) {
 			return true
@@ -55,19 +55,19 @@ func (t *Tetromino) Descend() {
 	t.Position.Y += 1
 }
 
-func (t *Tetromino) MoveLeft(a *Arena) {
+func (t *Tetromino) MoveLeft(a Arena) {
 	if t.canMoveLeft(a) {
 		t.Position.X -= 1
 	}
 }
 
-func (t *Tetromino) MoveRight(a *Arena) {
+func (t *Tetromino) MoveRight(a Arena) {
 	if t.canMoveRight(a) {
 		t.Position.X += 1
 	}
 }
 
-func (t *Tetromino) Rotate(a *Arena) {
+func (t *Tetromino) Rotate(a Arena) {
 	prevState := t.State
 	t.State = (t.State + 1) % 4
 	if t.Collides(a) {
@@ -75,7 +75,7 @@ func (t *Tetromino) Rotate(a *Arena) {
 	}
 }
 
-func (t *Tetromino) CanMoveDown(a *Arena) bool {
+func (t *Tetromino) CanMoveDown(a Arena) bool {
 	bottom := make(map[int]Position)
 	for _, part := range t.parts() {
 		if val, ok := bottom[part.X]; !ok || (ok && val.Y < part.Y) {
@@ -90,7 +90,7 @@ func (t *Tetromino) CanMoveDown(a *Arena) bool {
 	return true
 }
 
-func (t *Tetromino) canMoveLeft(a *Arena) bool {
+func (t *Tetromino) canMoveLeft(a Arena) bool {
 	left := make(map[int]Position)
 	for _, part := range t.parts() {
 		if present, ok := left[part.Y]; !ok || (ok && present.X > part.X) {
@@ -105,7 +105,7 @@ func (t *Tetromino) canMoveLeft(a *Arena) bool {
 	return true
 }
 
-func (t *Tetromino) canMoveRight(a *Arena) bool {
+func (t *Tetromino) canMoveRight(a Arena) bool {
 	right := make(map[int]Position)
 	for _, part := range t.parts() {
 		if present, ok := right[part.Y]; !ok || (ok && present.X < part.X) {
